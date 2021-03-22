@@ -1,0 +1,42 @@
+.contentContainer {
+  max-width: 1120px;
+  height: calc(100vh - 5rem);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin: 0 auto;
+}
+
+.hero {
+  max-width: 600px;
+
+  > span {
+    font-size: 1.5em;
+    font-weight: bold;
+  }
+
+  h1, p {
+    span {
+      color: var(--cyan-500);
+    }
+  }
+
+  h1 {
+    margin-top: 2rem;
+
+    font-size: 4.5rem;
+    font-weight: bold;
+
+    line-height: 4.5rem;
+  }
+
+  p {
+    margin-top: 1.5rem;
+
+    font-size: 1.5rem;
+
+    line-height: 2.25rem;
+  }
+}
