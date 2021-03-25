@@ -3,18 +3,10 @@ import { fauna } from '../../../services/faunadb'
 
 import { stripe } from '../../../services/stripe'
 
-type User = {
-  ref: {
-    id: string
-  }
-  data: {
-    stripe_customer_id: string
-  }
-}
-
 export async function saveSubscription(
   subscriptionId: string,
-  customerId: string
+  customerId: string,
+  isACreationEvent = false
 ) {
   const userRef = await fauna.query(
     q.Select(
@@ -37,10 +29,27 @@ export async function saveSubscription(
     price_id: subscription.items.data[0].price.id
   }
 
-  await fauna.query(
-    q.Create(
-      q.Collection('subscriptions'),
-      { data: subscriptionData }
+  if (isACreationEvent) {
+    await fauna.query(
+      q.Create(
+        q.Collection('subscriptions'),
+        { data: subscriptionData }
+      )
     )
-  )
+  } else {
+    await fauna.query(
+      q.Replace(
+        q.Select(
+          'ref',
+          q.Get(
+            q.Match(
+              q.Index('subscription_by_id'),
+              subscriptionId
+            )
+          )
+        ),
+        { data: subscriptionData }
+      )
+    )
+  }
 }
