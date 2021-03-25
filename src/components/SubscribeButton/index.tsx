@@ -5,11 +5,7 @@ import { signIn, useSession } from 'next-auth/client'
 import { getStripeJs } from '../../services/stripe-js'
 import { api } from '../../services/api'
 
-interface SubscribeButtonProps {
-  priceId: string
-}
-
-export default function SubscribeButton({}: SubscribeButtonProps) {
+export default function SubscribeButton() {
   const [session] = useSession()
 
   async function handleSubscribe() {

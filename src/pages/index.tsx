@@ -31,7 +31,7 @@ export default function Home({ product }: HomeProps) {
             <span>for {product.amount} month</span>
           </p>
 
-          <SubscribeButton priceId={product.priceId} />
+          <SubscribeButton />
         </section>
 
         <img src="/images/avatar.svg" alt="girl coding" />
@@ -44,7 +44,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const price = await stripe.prices.retrieve('price_1IXwLEBwbWvtEAZ7JlJw4Ujq')
 
   const product = {
-    priceId: price.id,
     amount: new Intl.NumberFormat('en-US', {
       currency: 'USD',
       style: 'currency'
