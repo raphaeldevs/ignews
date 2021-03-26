@@ -6,6 +6,11 @@ import { fauna } from '../../../services/faunadb'
 
 import { github } from '../../../services/github'
 
+interface GitHubUserEmail {
+  primary: boolean
+  email: string
+}
+
 export async function getUserEmail(accessToken: string) {
   const response = await github.get('user/emails', {
     headers: {
@@ -13,9 +18,11 @@ export async function getUserEmail(accessToken: string) {
     }
   })
   
-  const { email } = response.data.find(email => email.primary)
+  const { email } = response.data.find(
+    (email: GitHubUserEmail) => email.primary
+  )
 
-  return email 
+  return email
 }
 
 export default NextAuth({
