@@ -4,12 +4,26 @@ import Providers from 'next-auth/providers'
 import { query as q } from 'faunadb'
 import { fauna } from '../../../services/faunadb'
 
+import { github } from '../../../services/github'
+
+export async function getUserEmail(accessToken: string) {
+  const response = await github.get('user/emails', {
+    headers: {
+      Authorization: `token ${accessToken}`
+    }
+  })
+  
+  const { email } = response.data.find(email => email.primary)
+
+  return email 
+}
+
 export default NextAuth({
   providers: [
     Providers.GitHub({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      scope: 'read:user'
+      scope: 'read:user,user:email'
     })
   ],
   session: {
@@ -57,14 +71,14 @@ export default NextAuth({
 
     },
     async signIn(user, account, profile) {
-      const { email } = user
-
+      const email = user.email ?? await getUserEmail(account.accessToken)
+      
       try {
         await fauna.query(
           q.If(
             q.Not(
               q.Exists(
-                q.Match(q.Index('user_by_email'), q.Casefold(user.email))
+                q.Match(q.Index('user_by_email'), q.Casefold(email))
               )
             ),
             q.Create(
@@ -74,7 +88,7 @@ export default NextAuth({
             q.Get(
               q.Match(
                 q.Index('user_by_email'), 
-                q.Casefold(user.email)
+                q.Casefold(email)
               )
             )
           )
@@ -82,6 +96,8 @@ export default NextAuth({
 
         return true
       } catch (error) {
+        console.error(error)
+
         return false
       }
     }
