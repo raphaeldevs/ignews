@@ -50,11 +50,11 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
     const success_url = process.env.NODE_ENV === 'development' 
       ? process.env.STRIPE_SUCCESS_URL
-      : `${process.env.NEXT_PUBLIC_VERCEL_URL}/posts`
+      : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/posts`
 
     const cancel_url = process.env.NODE_ENV === 'development' 
       ? process.env.STRIPE_CANCEL_URL
-      : `${process.env.NEXT_PUBLIC_VERCEL_URL}`
+      : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
 
     const stripeCheckoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
