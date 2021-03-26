@@ -48,14 +48,6 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
       customerId = stripeCustomer.id
     }
 
-    const success_url = process.env.NODE_ENV === 'development' 
-      ? process.env.STRIPE_SUCCESS_URL
-      : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/posts`
-
-    const cancel_url = process.env.NODE_ENV === 'development' 
-      ? process.env.STRIPE_CANCEL_URL
-      : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-
     const stripeCheckoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       customer: customerId,
@@ -63,8 +55,8 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
       line_items: [{ price: process.env.STRIPE_SUBSCRIPTION_PRICEID, quantity: 1 }],
       mode: 'subscription',
       allow_promotion_codes: true,
-      success_url,
-      cancel_url
+      success_url: process.env.STRIPE_SUCCESS_URL,
+      cancel_url: process.env.STRIPE_CANCEL_URL
     })
 
     return response.status(200).json({ sessionId: stripeCheckoutSession.id })
