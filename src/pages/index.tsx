@@ -10,7 +10,6 @@ import styles from '../styles/home.module.scss'
 
 interface HomeProps {
   product: {
-    priceId: string
     amount: number
   }
 }
@@ -41,7 +40,7 @@ export default function Home({ product }: HomeProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const price = await stripe.prices.retrieve('price_1IXwLEBwbWvtEAZ7JlJw4Ujq')
+  const price = await stripe.prices.retrieve(process.env.STRIPE_SUBSCRIPTION_PRICEID)
 
   const product = {
     amount: new Intl.NumberFormat('en-US', {
