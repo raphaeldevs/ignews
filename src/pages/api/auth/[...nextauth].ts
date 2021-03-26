@@ -12,6 +12,12 @@ export default NextAuth({
       scope: 'read:user'
     })
   ],
+  session: {
+    jwt: true
+  },
+  jwt: {
+    signingKey: process.env.JWT_SIGNING_PRIVATE_KEY
+  },
   callbacks: {
     async session(session) {
       try {
