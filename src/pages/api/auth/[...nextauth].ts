@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { User } from 'next-auth'
 import Providers from 'next-auth/providers'
 
 import { query as q } from 'faunadb'
@@ -9,6 +9,10 @@ import { github } from '../../../services/github'
 interface GitHubUserEmail {
   primary: boolean
   email: string
+}
+
+interface UserSession extends User {
+  accessToken: string
 }
 
 export async function getUserEmail(accessToken: string) {
@@ -40,7 +44,18 @@ export default NextAuth({
     signingKey: process.env.JWT_SIGNING_PRIVATE_KEY
   },
   callbacks: {
-    async session(session) {
+    async jwt(token, user, account) {
+      if (account) {
+        token.accessToken = account.accessToken
+      }
+
+      return token
+    },
+    async session(session, user: UserSession) {
+      if (!session.user.email) {
+        session.user.email = await getUserEmail(user.accessToken)
+      }
+
       try {
         const userActiveSubscription = await fauna.query(
           q.Get(
@@ -64,7 +79,7 @@ export default NextAuth({
             ])
           )
         )
-
+        
         return {
           ...session,
           activeSubscription: userActiveSubscription
