@@ -32,6 +32,13 @@
 
     color: var(--gray-100);
 
+    &.previewContent {
+      -webkit-text-fill-color: transparent;
+      
+      background: linear-gradient(var(--gray-100), transparent);
+      background-clip: text;
+    }
+
     p, ul {
       margin: 1.5rem 0;
     }
@@ -42,6 +49,30 @@
       li {
         margin: 0.5rem 0;
       }
+    }
+  }
+}
+
+.continueReading {
+  margin: 4rem 0 2rem;
+  padding: 2rem;
+
+  text-align: center;
+
+  background: var(--gray-850);
+
+  border-radius: 100px;
+
+  font-size: 1.25rem;
+  font-weight: bold;
+
+  a {
+    margin-left: 0.5rem;
+
+    color: var(--yellow-500);
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 }
