@@ -9,7 +9,7 @@ import { getPrismicClient } from '../../services/prismic'
 
 import styles from './post.module.scss'
 
-interface PostsProps {
+interface PostProps {
   post: {
     slug: string
     title: string
@@ -18,7 +18,7 @@ interface PostsProps {
   }
 }
 
-export default function Posts({ post }: PostsProps) {
+export default function Post({ post }: PostProps) {
   return (
     <>
       <Head>
@@ -44,7 +44,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
 
   const { slug } = params
 
-  if (!session.activeSubscription) {
+  if (!session?.activeSubscription) {
     return {
       redirect: {
         destination: '/',
