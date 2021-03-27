@@ -29,9 +29,9 @@ export default function Post({ post }: PostProps) {
         <article className={styles.post}>
           <h1>{post.title}</h1>
           <time>{post.updatedAt}</time>
-          <div 
+          <div
             className={styles.postContent}
-            dangerouslySetInnerHTML={{ __html: post.content }} 
+            dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </article>
       </main>
@@ -39,7 +39,10 @@ export default function Post({ post }: PostProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  params
+}) => {
   const session = await getSession({ req })
 
   const { slug } = params
@@ -47,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
   if (!session?.activeSubscription) {
     return {
       redirect: {
-        destination: '/',
+        destination: `/posts/preview/${slug}`,
         permanent: false
       }
     }
