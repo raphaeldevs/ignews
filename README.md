@@ -21,6 +21,7 @@ Uma plataforma de conteúdos sob assinatura para desenvolvedores React
 #### Conceito de Serverless
 
 > server + less = servidor + menos
+
 > serverless = sem servidor
 
 Resumidamente, ao usar serveless, é possível executar funções Javascript assim que receber uma requisição em um determinado endpoint. Logo, não é necessário ter um backend rodando 24h. 
