@@ -34,12 +34,13 @@
 
     &.previewContent {
       -webkit-text-fill-color: transparent;
-      
+
       background: linear-gradient(var(--gray-100), transparent);
       background-clip: text;
     }
 
-    p, ul {
+    p,
+    ul {
       margin: 1.5rem 0;
     }
 

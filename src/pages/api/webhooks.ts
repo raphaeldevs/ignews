@@ -35,7 +35,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
     const bufferData = await buffer(request)
 
     const secret = request.headers['stripe-signature']
-    
+
     let event: Stripe.Event
 
     try {

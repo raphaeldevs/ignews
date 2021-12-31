@@ -9,7 +9,7 @@ import styles from './styles.module.scss'
 
 export default function SubscribeButton() {
   const { data: session } = useSession()
-  
+
   const router = useRouter()
 
   async function handleSubscribe() {

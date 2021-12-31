@@ -14,8 +14,6 @@ interface GitHubUserEmail {
 
 async function getUserEmail(accessToken: string) {
   try {
-    console.log(`Trying to get user email from GitHub`, accessToken)
-
     const response = await github.get('user/emails', {
       headers: {
         Authorization: `token ${accessToken}`
@@ -25,8 +23,6 @@ async function getUserEmail(accessToken: string) {
     const { email } = response.data.find(
       (email: GitHubUserEmail) => email.primary
     )
-
-    console.log(`Found user email`, email)
 
     return email
   } catch (error) {
@@ -61,7 +57,7 @@ export default NextAuth({
     },
     async session({ session, user, token }) {
       session.accessToken = token.accessToken
-      
+
       try {
         if (!session.user.email) {
           const email = await getUserEmail(user.accessToken as string)
@@ -109,8 +105,6 @@ export default NextAuth({
       }
     },
     async signIn({ user, account }) {
-      console.log('signIn')
-
       const email =
         user.email ?? (await getUserEmail(account.accessToken as string))
 
@@ -124,8 +118,10 @@ export default NextAuth({
             q.Not(
               q.Exists(
                 q.Match(
-                  q.Index('user_by_email'), q.Casefold(email))
+                  q.Index('user_by_email'),
+                  q.Casefold(email)
                 )
+              )
             ),
             q.Create(
               q.Collection('users'),
@@ -139,8 +135,6 @@ export default NextAuth({
             )
           )
         )
-
-        console.log('User created or found', email)
 
         return true
       } catch (error) {

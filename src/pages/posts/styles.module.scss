@@ -12,13 +12,13 @@
 
   a {
     display: block;
-    
+
     transition: color 0.2s;
 
     &:hover {
       color: var(--yellow-500);
     }
-    
+
     & + a {
       margin-top: 2rem;
       padding-top: 2rem;
@@ -31,7 +31,7 @@
       align-items: center;
 
       color: var(--gray-300);
-      
+
       font-size: 1rem;
     }
 
@@ -44,12 +44,12 @@
 
       font-size: 1.5rem;
     }
-    
+
     p {
       color: var(--gray-300);
 
       line-height: 1.625rem;
-      
+
       font-size: 1.25rem;
     }
   }
