@@ -1,12 +1,13 @@
+import { useEffect } from 'react'
+
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { useSession } from 'next-auth/client'
 
 import { RichText } from 'prismic-dom'
-import { useEffect } from 'react'
 
 import { getPrismicClient } from '../../../services/prismic'
 
@@ -27,7 +28,7 @@ export default function PostPreview({ post }: PostPreviewProps) {
   const router = useRouter()
 
   useEffect(() => {
-    if(session?.activeSubscription) {
+    if (session?.activeSubscription) {
       router.push(`/posts/${post.slug}`)
 
       return
@@ -44,14 +45,14 @@ export default function PostPreview({ post }: PostPreviewProps) {
         <article className={styles.post}>
           <h1>{post.title}</h1>
           <time>{post.updatedAt}</time>
-          <div 
+          <div
             className={`${styles.postContent} ${styles.previewContent}`}
-            dangerouslySetInnerHTML={{ __html: post.content }} 
+            dangerouslySetInnerHTML={{ __html: post.content }}
           />
 
           <div className={styles.continueReading}>
             Wanna continue reading?
-            <Link href='/'>
+            <Link href="/">
               <a>Subscribe now 🤗</a>
             </Link>
           </div>

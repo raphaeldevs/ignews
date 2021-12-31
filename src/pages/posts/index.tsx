@@ -38,7 +38,7 @@ export default function Posts({ posts }: PostsProps) {
                 <p>{post.excerpt}</p>
               </a>
             </Link>
-          )) }
+          ))}
         </div>
       </main>
     </>
@@ -46,24 +46,30 @@ export default function Posts({ posts }: PostsProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const prismic = getPrismicClient() 
+  const prismic = getPrismicClient()
 
-  const response = await prismic.query([
-    Prismic.predicates.at('document.type', 'post')
-  ], {
-    fetch: ['post.title', 'post.content'],
-    pageSize: 100
-  })
+  const response = await prismic.query(
+    [Prismic.predicates.at('document.type', 'post')],
+    {
+      fetch: ['post.title', 'post.content'],
+      pageSize: 100
+    }
+  )
 
   const posts = response.results.map(post => ({
     slug: post.uid,
     title: RichText.asText(post.data.title),
-    excerpt: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
-    updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    })
+    excerpt:
+      post.data.content.find(content => content.type === 'paragraph')?.text ??
+      '',
+    updatedAt: new Date(post.last_publication_date).toLocaleDateString(
+      'pt-BR',
+      {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }
+    )
   }))
 
   return {
