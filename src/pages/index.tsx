@@ -1,5 +1,8 @@
+import { useEffect } from 'react'
+
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 import SubscribeButton from '../components/SubscribeButton'
 
@@ -14,6 +17,18 @@ interface HomeProps {
 }
 
 export default function Home({ product }: HomeProps) {
+  const { success, error } = useRouter().query
+
+  useEffect(() => {
+    if (success) {
+      alert('Subscription successful! 🎉')
+    }
+
+    if (error) {
+      alert('Login failed! 🤔')
+    }
+  }, [success])
+
   return (
     <>
       <Head>
