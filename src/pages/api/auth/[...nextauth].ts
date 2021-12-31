@@ -1,8 +1,8 @@
 import { query as q } from 'faunadb'
 
-import NextAuth, { User } from 'next-auth'
+import NextAuth from 'next-auth'
 
-import Providers from 'next-auth/providers'
+import GithubProvider from 'next-auth/providers/github'
 
 import { fauna } from '../../../services/faunadb'
 import { github } from '../../../services/github'
@@ -10,10 +10,6 @@ import { github } from '../../../services/github'
 interface GitHubUserEmail {
   primary: boolean
   email: string
-}
-
-interface UserSession extends User {
-  accessToken: string
 }
 
 async function getUserEmail(accessToken: string) {
@@ -41,41 +37,40 @@ async function getUserEmail(accessToken: string) {
 
 export default NextAuth({
   providers: [
-    Providers.GitHub({
+    GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      scope: 'read:user,user:email'
+      authorization: {
+        params: {
+          scope: 'read:user,user:email'
+        }
+      }
     })
   ],
+  secret: process.env.JWT_SIGNING_PRIVATE_KEY,
   session: {
-    jwt: true
-  },
-  jwt: {
-    signingKey: process.env.JWT_SIGNING_PRIVATE_KEY
+    strategy: 'jwt'
   },
   callbacks: {
-    async jwt(token, user, account) {
-      try {
-        if (account) {
-          token.accessToken = account.accessToken
-        }
-  
-        return token
-      } catch (error) {
-        console.error(`Error creating JWT`, error)
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.access_token
       }
+
+      return token
     },
-    async session(session, user: UserSession) {
+    async session({ session, user, token }) {
+      session.accessToken = token.accessToken
+      
       try {
         if (!session.user.email) {
-          const email = await getUserEmail(user.accessToken)
-          
+          const email = await getUserEmail(user.accessToken as string)
+
           if (!email) {
             throw new Error('No email found')
           }
 
           session.user.email = email
-
         }
 
         const userActiveSubscription = await fauna.query(
@@ -103,7 +98,9 @@ export default NextAuth({
           activeSubscription: userActiveSubscription
         }
       } catch (error) {
-        console.error('Error in session callback :(', error)
+        if (error?.requestResult?.statusCode !== 404) {
+          console.error('Error in session callback :(', error)
+        }
 
         return {
           ...session,
@@ -111,15 +108,16 @@ export default NextAuth({
         }
       }
     },
-    async signIn(user, account, profile) {
+    async signIn({ user, account }) {
       console.log('signIn')
-      
-      const email = user.email ?? (await getUserEmail(account.accessToken))
+
+      const email =
+        user.email ?? (await getUserEmail(account.accessToken as string))
 
       if (!email) {
         throw new Error('No email found')
       }
-      
+
       try {
         await fauna.query(
           q.If(
@@ -148,7 +146,7 @@ export default NextAuth({
       } catch (error) {
         console.error('Error in signIn callback :(', error)
 
-        return false
+        return '/?error=true'
       }
     }
   }

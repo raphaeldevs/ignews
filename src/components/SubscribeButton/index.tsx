@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 
-import { signIn, useSession } from 'next-auth/client'
+import { signIn, useSession } from 'next-auth/react'
 
 import { getStripeJs } from '../../services/stripe-js'
 import { api } from '../../services/api'
@@ -8,7 +8,7 @@ import { api } from '../../services/api'
 import styles from './styles.module.scss'
 
 export default function SubscribeButton() {
-  const [session] = useSession()
+  const { data: session } = useSession()
   
   const router = useRouter()
 
