@@ -9,6 +9,7 @@ import SubscribeButton from '../components/SubscribeButton'
 import { stripe } from '../services/stripe'
 
 import styles from '../styles/home.module.scss'
+import { useSession } from 'next-auth/react'
 
 interface HomeProps {
   product: {
@@ -17,17 +18,24 @@ interface HomeProps {
 }
 
 export default function Home({ product }: HomeProps) {
-  const { success, error } = useRouter().query
+  const {
+    push,
+    query: { error }
+  } = useRouter()
+
+  const { data: session } = useSession()
 
   useEffect(() => {
-    if (success) {
+    if (error) {
       alert('Subscription successful! 🎉')
     }
+  }, [error])
 
-    if (error) {
-      alert('Login failed! 🤔')
+  useEffect(() => {
+    if (session?.activeSubscription) {
+      push('/posts')
     }
-  }, [success])
+  }, [session?.activeSubscription])
 
   return (
     <>

@@ -1,6 +1,9 @@
+import { useEffect } from 'react'
+
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import Prismic from '@prismicio/client'
 
@@ -22,6 +25,14 @@ interface PostsProps {
 }
 
 export default function Posts({ posts }: PostsProps) {
+  const { success } = useRouter().query
+
+  useEffect(() => {
+    if (success) {
+      alert('Subscription successful! 🎉')
+    }
+  }, [success])
+
   return (
     <>
       <Head>

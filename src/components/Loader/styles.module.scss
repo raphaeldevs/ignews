@@ -1,0 +1,41 @@
+.loaderContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.loader {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--yellow-500);
+  box-shadow: 0 0 0 0 var(--yellow-500);
+  animation: loading 1.5s infinite linear;
+  position: relative;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 var(--yellow-500);
+  animation: inherit;
+  animation-delay: -0.5s;
+}
+.loader:after {
+  animation-delay: -1s;
+}
+@keyframes loading {
+  100% {
+    box-shadow: 0 0 0 40px #0000;
+  }
+}
