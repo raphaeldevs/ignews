@@ -5,31 +5,6 @@ import NextAuth from 'next-auth'
 import GithubProvider from 'next-auth/providers/github'
 
 import { fauna } from '../../../services/faunadb'
-import { github } from '../../../services/github'
-
-interface GitHubUserEmail {
-  primary: boolean
-  email: string
-}
-
-async function getUserEmail(accessToken: string) {
-  try {
-    const response = await github.get('user/emails', {
-      headers: {
-        Authorization: `token ${accessToken}`
-      }
-    })
-
-    const { email } = response.data.find(
-      (email: GitHubUserEmail) => email.primary
-    )
-
-    return email
-  } catch (error) {
-    console.error(`Error getting user email from GitHub`, error)
-    return null
-  }
-}
 
 export default NextAuth({
   providers: [
@@ -55,20 +30,10 @@ export default NextAuth({
 
       return token
     },
-    async session({ session, user, token }) {
+    async session({ session, token }) {
       session.accessToken = token.accessToken
 
       try {
-        if (!session.user.email) {
-          const email = await getUserEmail(user.accessToken as string)
-
-          if (!email) {
-            throw new Error('No email found')
-          }
-
-          session.user.email = email
-        }
-
         const userActiveSubscription = await fauna.query(
           q.Get(
             q.Intersection([
@@ -104,13 +69,8 @@ export default NextAuth({
         }
       }
     },
-    async signIn({ user, account }) {
-      const email =
-        user.email ?? (await getUserEmail(account.accessToken as string))
-
-      if (!email) {
-        throw new Error('No email found')
-      }
+    async signIn({ user }) {
+      const email = user.email
 
       try {
         await fauna.query(
